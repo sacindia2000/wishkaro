@@ -1,0 +1,6 @@
+{
+  "name": "wishkaro",
+  "short_name": "wishkaro",
+  "start_url": "/",
+  "display": "standalone"
+}

@@ -1,0 +1,20 @@
+{
+  "name": "wishkaro",
+  "main": "index.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0",
+    "paper-tabs": "^2.0.0",
+    "iron-list": "^2.0.13",
+    "iron-image": "^2.2.0",
+    "iron-scroll-threshold": "^1.0.2",
+    "iron-icons": "^2.1.1",
+    "iron-icon": "^2.1.0",
+    "paper-icon-button": "^2.2.0",
+    "iron-flex-layout": "^2.0.3",
+    "paper-spinner": "^2.1.0"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+  }
+}
