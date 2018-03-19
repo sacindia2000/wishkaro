@@ -17,6 +17,8 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 
+
+
 <dom-module id="wishkaro-app">
   <template id = "templateID">
 <style>
@@ -47,7 +49,8 @@
    }
 </style>
  <app-header-layout fullbleed>
-    <app-header slot="header">
+
+  <app-header slot="header">
         <app-toolbar style= "text-align: center;
         vertical-align: middle;">
         <paper-icon-button hidden$= "{{hidebackarrow}}" icon="arrow-back" on-tap = "backarrowtapped"></paper-icon-button>
@@ -65,10 +68,8 @@
        fallback-selection="view404"
        role="main">
        
-    <my-view1 title = "{{maintitle}}" chngpage = "{{page}}" hidetab="{{hideme}}" hidebackarrow="{{hidebackarrow}}" 
-                 name="view1"></my-view1>
-    <my-view2 chngpage = "{{page}}" hidetab="{{hideme}}" hidebackarrow="{{hidebackarrow}}" 
-              name="view2"></my-view2>
+    <my-view1 objectselected = "{{testitem}}" name="view1"></my-view1>
+    <my-view2 objectselected = "{{testitem}}"  name="view2"></my-view2>
     <my-view3 chngpage = "{{page}}" hidetab="{{hideme}}" hidebackarrow="{{hidebackarrow}}" 
               name="view3"></my-view3>
     <my-view404 name="view404"></my-view404>
@@ -109,6 +110,12 @@
         hidebackarrow: {
           type: Boolean,
           value: true
+        },
+        testitem:
+        {
+          type : Object,
+          notify : true,
+          observer : '_testitemchanged'
         },
           myProperty:Boolean,
           routeData: Object,
@@ -159,6 +166,17 @@
         console.log("I am clicked");
 //        this.hideme = !this.hideme;
   //      this.page = "view1";
+      }
+      _testitemchanged()
+      {
+        console.log('Item has changed need to check');
+        console.log(this.testitem);
+        if(this.testitem != null)
+        {
+        this. hidebackarrow= false;
+        this.hideme = true;
+        this.page = "view3";
+        }
       }
       backarrowtapped()
       {

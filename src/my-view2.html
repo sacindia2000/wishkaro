@@ -7,20 +7,20 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
-
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="my-firestoreinit.html">
+
 
 <dom-module id="my-view2">
   <template>
       <custom-style>
                 
-    <style include="shared-styles iron-flex iron-flex-alignment">
+<style include="shared-styles iron-flex iron-flex-alignment">
 :host {
   height: 80vh;
   display: flex;
@@ -46,133 +46,125 @@ padding-bottom: 20px;
  @apply --layout-wrap;
  margin-right: 2px;
  margin-left: 2px;
+
 }
 .imagecontainer
 {
  margin-top:2px;
  margin-bottom:2px
 }
-.test
-{
-  @apply --layout-vertical;
-  @apply --layout-flex;
-  @apply --layout-wrap;
-  margin-right: 2px;
-  margin-left: 2px;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  padding-bottom: 20px;
-}
 
-.test1
-{
-  @apply --layout-flex;
- @apply --layout-horizontal;
- @apply --layout-wrap;
- height:180px;
- width:170px;
- margin-left: 2px;
- margin-right: 2px;
-margin-top: 2px;
-margin-bottom: 2px;
-}
     </style>
- 
+    
+    
   <div class = "container">
   <iron-list items="[[imagearray]]" as="item" id = "itemlist" scroll-target= "document"  selected-item = "{{selectedItem}}" grid>
     <template>
         <div class = "flexchild"style="width:50%"> 
       <iron-image  sizing = "cover" style = "width:calc(100% - 4px); height:180px;"
-      src=[[item]]></iron-image>
+      src=[[item.linkwebp]]></iron-image>
        
     </div>
   
     </template>
   </iron-list>
 </div>
+<my-firestoreinit datacollection = "category" notifycollection = "categoryupdated"
+                  dataavailable = "{{newdataind}}" dataarray = "{{imagearray}}" 
+                  testobj1 = "{{testobj}}" requestdata = "{{datarequest}}"
+                  responsedata = "{{dataresponse}}"></my-firestoreinit>
 <paper-spinner active></paper-spinner>
 
 
 </template>
 
   <script>
+    var lastreadindex = 0;
     class MyView2 extends Polymer.Element {
       static get is() { return 'my-view2'; }
       static get properties() {
         return {
-          chngpage: {
-            type: String,
-            notify: true
-          },
-          hidetab:{
-           type: Boolean,
-           notify: true
-          },
-          hidebackarrow:
-          {
-            type: Boolean,
-            notify: true
-          },
-          imagearray: {
+           imagearray: {
             type: Array
           },
           scrollTarget: HTMLElement,
           selectedItem:
           {
-            type:Number
+            type:Number,
+            observer: '_itemSelected'
           },
-          title:
+          newdataind :
           {
-            type: String,
-            notify: true
+            type: Boolean,
+            observer: '_Dataavailableind'
+          },
+          datarequest:
+          {
+             type:Boolean,
+             notify:true,
+             value: false
+          },
+          dataresponse:
+          {
+            type:Boolean,
+            value: false,
+            observer : '_DataResponse'
+          },
+          testobj :
+          {
+            type: Object,
+            notify:true,
+            value:
+            {
+              requestdatacount: 0,
+              readdatacount:0
+            }
+
           }
           };
+      }
+
+      _DataResponse()
+      {
+        console.log("Dat Read is "+ this.testobj.readdatacount);
+        
+        if(this.testobj.readdatacount == 2)
+            {
+            this.testobj.requestdatacount =2;
+            
+            for (var i = 0, len = this.testobj.contentarray.length; i < len; i++) {
+            var data = new Object();
+            data.timestamp = this.testobj.contentarray[i].get("created-time");
+            data.linkwebp = this.testobj.contentarray[i].get("link-webp");
+            this.push('imagearray',data);
+            }
+            this.testobj.contentarray.length =0;
+            this.datarequest = !this.datarequest;
+            }
+           
+      }
+      _itemSelected()
+      {
+         console.log("Iron-scroll item selected observer");
+         console.log(this.selectedItem);
+      }
+      _Dataavailableind(  )
+      {
+            console.log("Data available observer called");
       }
       ready()
       {
         super.ready();
         this.$.itemlist.selectionEnabled = true;
         this.imagearray = [];
-      //  this.title = "Ottomate"
-      console.log(this.selectedItem);
-        /*
-        if (this.selectedItem) {
-        this.selected = this.$.itemlist.indexOf(this.selectedItem);
-             }
-             */
-        this.push('imagearray',"https://firebasestorage.googleapis.com/v0/b/wishpix-5fff8.appspot.com/o/img-1.webp?alt=media&token=61afef39-c718-40e6-970b-3b4a88ff61e9");
-        this.push('imagearray',"https://firebasestorage.googleapis.com/v0/b/wishpix-5fff8.appspot.com/o/img-2.jpg?alt=media&token=52abc17c-7000-4cc6-8f54-3b724d8de330");
-       this.push('imagearray',"https://firebasestorage.googleapis.com/v0/b/wishpix-5fff8.appspot.com/o/img-2.webp?alt=media&token=67218d14-3163-4013-8b5a-83ee21b286c0");
-              setInterval(() => {
-         console.log("Adding Data"); 
-         /*
-         if (this.selectedItem) {
-        this.selected = this.$.itemlist.indexOf(this.selectedItem);
+        this.testobj.requestdatacount =2;
+        this.testobj.contentarray = [];
+        this.datarequest = !this.datarequest;
         
-        }  
-        */    
-        this.push('imagearray',"https://firebasestorage.googleapis.com/v0/b/wishpix-5fff8.appspot.com/o/img-2.webp?alt=media&token=67218d14-3163-4013-8b5a-83ee21b286c0");
-        if (this.$.itemlist.lastVisibleIndex >= this.$.itemlist._virtualCount-4 )
-        {
-           console.log("Please update the list"+this.testitem);
         /*
-           this.push('imagearray',"https://firebasestorage.googleapis.com/v0/b/wishpix-5fff8.appspot.com/o/img-1.jpg?alt=media&token=64a6002c-0fcd-41ae-b19c-3a7403e690dd");
-           this.push('imagearray',"https://firebasestorage.googleapis.com/v0/b/wishpix-5fff8.appspot.com/o/img-1.webp?alt=media&token=61afef39-c718-40e6-970b-3b4a88ff61e9");
-            this.push('imagearray',"https://firebasestorage.googleapis.com/v0/b/wishpix-5fff8.appspot.com/o/img-2.jpg?alt=media&token=52abc17c-7000-4cc6-8f54-3b724d8de330");
-            this.push('imagearray',"https://firebasestorage.googleapis.com/v0/b/wishpix-5fff8.appspot.com/o/img-2.webp?alt=media&token=67218d14-3163-4013-8b5a-83ee21b286c0");
-       this.push('imagearray',"https://firebasestorage.googleapis.com/v0/b/wishpix-5fff8.appspot.com/o/img-1.jpg?alt=media&token=64a6002c-0fcd-41ae-b19c-3a7403e690dd");
-        this.push('imagearray',"https://firebasestorage.googleapis.com/v0/b/wishpix-5fff8.appspot.com/o/img-1.webp?alt=media&token=61afef39-c718-40e6-970b-3b4a88ff61e9");
-        this.push('imagearray',"https://firebasestorage.googleapis.com/v0/b/wishpix-5fff8.appspot.com/o/img-2.jpg?alt=media&token=52abc17c-7000-4cc6-8f54-3b724d8de330");
-       this.push('imagearray',"https://firebasestorage.googleapis.com/v0/b/wishpix-5fff8.appspot.com/o/img-2.webp?alt=media&token=67218d14-3163-4013-8b5a-83ee21b286c0");
-      */
-        }
-       /*
-        console.log( "Last One " + this.$.itemlist.lastVisibleIndex);
-        console.log( "First One " + this.$.itemlist.firstVisibleIndex);
-        console.log( "Scroll  " + this.$.itemlist.scrollOffset);
-        console.log( "Count " + this.$.itemlist._virtualCount);
-        */
-        }, 5000);  
+        setInterval(() => {
+              }, 5000);
+        */        
       }
         
     }

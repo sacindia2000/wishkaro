@@ -1,0 +1,126 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+
+
+<dom-module id="my-firestore">
+  <template>
+      <custom-style>
+                
+<style >
+    </style>
+ 
+</template>
+
+  <script>
+    class MyFirestore extends Polymer.Element {
+      static get is() { return 'my-firestore'; }
+      static get properties() {
+        return {
+           datacollection:
+           {
+               type : String
+           },
+           notifycollection:{
+               type : String
+           },
+           containerdata:{
+            type: Array
+           },
+          newdataind:
+          {
+              type: Boolean
+          },
+          dataarray:
+          {
+              type: Array
+          },
+          error:
+          {
+              type : String
+          }
+        
+          };
+      }
+      _itemSelected()
+      {
+         console.log("Iron-scroll item selected observer");
+         console.log(this.selectedItem);
+    //     this.objectselected = this.selectedItem;         
+
+      }
+
+      ready()
+      {
+        super.ready();
+        console.log("MY FIRESTORE IS READY");  
+        console.log("Data Collection Name ="+ this.datacollection);
+           
+       // myfirebase_init(); 
+     // db = firebase.firestore();
+   //    db.collection("dataupdated").onSnapshot(function (querySnapshot) {
+  //    console.log(" New data is available");
+
+  //  });
+
+  
+      }
+        
+    }
+/**
+ * Initiaze fire base also enable persistance 
+ */
+function myfirebase_init( )
+{
+    var config = {
+        apiKey: "AIzaSyCA0RlvgN4ZLba2uAuCi3hgZDd0RHpmGJY",
+        authDomain: "wishpix-5fff8.firebaseapp.com",
+        databaseURL: "https://wishpix-5fff8.firebaseio.com",
+        projectId: "wishpix-5fff8",
+        storageBucket: "wishpix-5fff8.appspot.com",
+        messagingSenderId: "281863013543"
+      };
+      firebase.initializeApp(config);
+
+      console.log("myfirebase_init initiazed");
+      db = firebase.firestore();
+      console.log("Firebase DB has been initialized");
+      console.log("Enable persistance");
+      firebase.firestore().enablePersistence()
+      .then(function() {
+          // Initialize Cloud Firestore through firebase
+          console.log("Persistance enabled");
+          
+      })
+      .catch(function(err) {
+          if (err.code == 'failed-precondition') {
+              // Multiple tabs open, persistence can only be enabled
+              // in one tab at a a time.
+              // ...
+              console.log("Persistance failed-precondition");
+          } else if (err.code == 'unimplemented') {
+              // The current browser does not support all of the
+              // features required to enable persistence
+              // ...
+              console.log("persistance unimplemented");
+          }
+      });
+
+}
+
+    window.customElements.define(MyFirestore.is, MyFirestore);
+  </script>
+</dom-module>
